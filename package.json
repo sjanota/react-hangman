@@ -8,7 +8,7 @@
   "scripts": {
     "start": "brunch watch --server -n",
     "build": "brunch build --production",
-    "publish": "git subtree push --prefix public origin gh-pages"
+    "publish": "brunch build; git subtree push --prefix public origin gh-pages"
   },
   "dependencies": {
     "classnames": "^2.2.5",
