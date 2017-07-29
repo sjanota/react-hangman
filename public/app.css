@@ -1,0 +1,41 @@
+body {
+  background-color: #2E2C4E; }
+
+h5 {
+  margin: 30px 0px 10px 0px; }
+
+.main {
+  font-family: -apple-system, Sans-Serif;
+  text-align: center;
+  font-size: 24pt;
+  color: #ECB673; }
+
+.hidden-word {
+  background: radial-gradient(#ECB673, #ECB673, #ECB673, #ECB673, #2E2C4E, #2E2C4E, #2E2C4E);
+  padding: 40px 0px 40px 0px; }
+
+.letters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; }
+  .letters .letter {
+    font-family: monospace; }
+    .letters .letter > * {
+      padding: 2px 6px 6px 6px; }
+
+.picked {
+  background: radial-gradient(#C01729, #C01729, #2E2C4E, #2E2C4E); }
+
+.available {
+  cursor: default; }
+  .available:hover {
+    background: radial-gradient(#C01729, #C01729, #2E2C4E, #2E2C4E); }
+
+.good {
+  color: #37C1A9; }
+
+.wrong {
+  color: #E24024; }
+
+
+/*# sourceMappingURL=app.css.map*/
