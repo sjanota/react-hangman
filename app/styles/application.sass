@@ -1,0 +1,63 @@
+// Color scheme
+// Return to degas
+$background: #F57461
+$wrong: #F54B54
+$good: #A6B282
+$common: #2C0B1C
+$highlight: #F2B684
+
+// Wings of tommorow
+$background: #2E2C4E
+$wrong: #E24024
+$good: #37C1A9
+$common: #ECB673
+$highlight: #C01729
+
+$commonGradient: radial-gradient($common, $common, $common, $common, $background, $background, $background)
+$highlightGradient: radial-gradient($highlight, $highlight, $background, $background)
+
+body
+  background-color: $background
+
+h5
+  margin: 30px 0px 10px 0px
+
+@mixin flex-spaces
+  display: flex
+  justify-content: space-around
+
+.main
+  font-family: -apple-system, Sans-Serif
+  text-align: center
+  font-size: 24pt
+  color: $common
+
+.hidden-word
+  // @include flex-spaces
+  background: $commonGradient
+  padding: 40px 0px 40px 0px
+
+.letters
+  display: flex
+  flex-wrap: wrap
+  justify-content: center
+
+  .letter
+    font-family: monospace
+
+    > *
+      padding: 2px 6px 6px 6px
+
+.picked
+  background: $highlightGradient
+
+.available
+  cursor: default
+  &:hover
+    background: $highlightGradient
+
+.good
+  color: $good
+
+.wrong
+  color: $wrong
