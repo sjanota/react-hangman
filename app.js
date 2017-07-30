@@ -165,6 +165,10 @@ var _Game = require('./Game');
 
 var _Game2 = _interopRequireDefault(_Game);
 
+var _WordsService = require('./services/WordsService');
+
+var _WordsService2 = _interopRequireDefault(_WordsService);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -189,7 +193,15 @@ var App = function (_React$Component) {
   function App() {
     _classCallCheck(this, App);
 
-    return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
+    var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
+
+    _WordsService2.default.onReady(function () {
+      return _this.setState({ wordsReady: true });
+    });
+    _this.state = {
+      wordsReady: false
+    };
+    return _this;
   }
 
   _createClass(App, [{
@@ -198,11 +210,36 @@ var App = function (_React$Component) {
       return _react2.default.createElement(
         'div',
         { id: 'app-content' },
-        _react2.default.createElement(_Game2.default, {
-          word: 'katarakta',
-          allowedLetters: allowedLetters(),
-          maxErrors: 4
-        })
+        this._isReady() ? this._renderGame() : this._renderLoading()
+      );
+    }
+  }, {
+    key: '_isReady',
+    value: function _isReady() {
+      return this.state.wordsReady;
+    }
+  }, {
+    key: '_renderGame',
+    value: function _renderGame() {
+      return _react2.default.createElement(_Game2.default, {
+        word: this._randomWord('easy'),
+        allowedLetters: _WordsService2.default.letters,
+        maxErrors: 10
+      });
+    }
+  }, {
+    key: '_randomWord',
+    value: function _randomWord(level) {
+      var i = Math.floor(Math.random() * _WordsService2.default.words[level].length);
+      return _WordsService2.default.words[level][i];
+    }
+  }, {
+    key: '_renderLoading',
+    value: function _renderLoading() {
+      return _react2.default.createElement(
+        'p',
+        null,
+        'Loading'
       );
     }
   }]);
@@ -342,6 +379,32 @@ var Game = function (_React$Component) {
   }, {
     key: 'onLetterGuess',
     value: function onLetterGuess(letter) {
+      console.log(letter == "d");
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = this.state.targetLetters[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var l = _step.value;
+
+          console.log(l, letter, l == letter);
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
       if (this.state.targetLetters.includes(letter)) {
         this._letterFound(letter);
       } else {
@@ -764,6 +827,106 @@ var LetterSequence = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = LetterSequence;
+
+});
+
+require.register("components/services/WordsService.jsx", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _axios = require('axios');
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var WordsService = function () {
+  function WordsService() {
+    _classCallCheck(this, WordsService);
+
+    this.onReady = this.onReady.bind(this);
+    this.startLoading = this.startLoading.bind(this);
+    this.enterReady = this.enterReady.bind(this);
+
+    this.isRead = false;
+    this.onReadyCallbacks = [];
+  }
+
+  _createClass(WordsService, [{
+    key: 'onReady',
+    value: function onReady(callback) {
+      if (this.isReady) {
+        callback();
+      } else {
+        this.onReadyCallbacks.push(callback);
+      }
+    }
+  }, {
+    key: 'startLoading',
+    value: function startLoading() {
+      var _this = this;
+
+      console.log("loading...");
+      var loadingWords = _axios2.default.get('words.json');
+      var loadingLetters = _axios2.default.get('letters.json');
+      this.loading = _axios2.default.all([loadingWords, loadingLetters]).then(_axios2.default.spread(function (words, letters) {
+        _this.words = words.data;
+        console.log("Easy words: ", _this.words.easy.length);
+        console.log("Medium words: ", _this.words.medium.length);
+        console.log("Hard words: ", _this.words.hard.length);
+
+        _this.letters = letters.data.map(function (s) {
+          return s.toUpperCase();
+        });
+        console.log("Letters: ", _this.letters);
+        _this.enterReady();
+      }));
+    }
+  }, {
+    key: 'enterReady',
+    value: function enterReady() {
+      if (this.loadingLetters) this._isReady = true;
+      console.log("Words loaded");
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = this.onReadyCallbacks[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var callback = _step.value;
+
+          callback.call();
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+    }
+  }]);
+
+  return WordsService;
+}();
+
+var service = new WordsService();
+service.startLoading();
+exports.default = service;
 
 });
 
