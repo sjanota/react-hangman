@@ -13,7 +13,8 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "react": "^15.4",
-    "react-dom": "^15.4"
+    "react-dom": "^15.4",
+    "axios": "^0.16.2"
   },
   "devDependencies": {
     "auto-reload-brunch": "^2",

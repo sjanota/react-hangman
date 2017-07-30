@@ -80,6 +80,10 @@ export default class Game extends React.Component {
   }
 
   onLetterGuess(letter) {
+    console.log(letter == "d");
+    for (let l of this.state.targetLetters) {
+      console.log(l, letter, l == letter);
+    }
     if (this.state.targetLetters.includes(letter)) {
       this._letterFound(letter)
     } else {

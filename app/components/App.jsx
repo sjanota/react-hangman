@@ -1,5 +1,6 @@
 import React from 'react';
 import Game from './Game';
+import WordsService from './services/WordsService'
 
 function allowedLetters() {
   var result=[];
@@ -12,15 +13,42 @@ function allowedLetters() {
 }
 
 export default class App extends React.Component {
+  constructor() {
+    super();
+
+    WordsService.onReady(() => this.setState({wordsReady: true}))
+    this.state = {
+      wordsReady: false
+    }
+  }
+
   render() {
     return (
       <div id="app-content">
-        <Game
-          word = "katarakta"
-          allowedLetters={allowedLetters()}
-          maxErrors={4}
-        />
+        {this._isReady() ? this._renderGame() : this._renderLoading()}
+
       </div>
     );
+  }
+
+  _isReady() {
+    return this.state.wordsReady
+  }
+
+  _renderGame() {
+    return <Game
+      word = {this._randomWord('easy')}
+      allowedLetters={WordsService.letters}
+      maxErrors={10}
+    />
+  }
+
+  _randomWord(level) {
+    const i = Math.floor(Math.random() * WordsService.words[level].length)
+    return WordsService.words[level][i]
+  }
+
+  _renderLoading() {
+    return <p>Loading</p>
   }
 }
