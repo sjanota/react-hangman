@@ -379,32 +379,6 @@ var Game = function (_React$Component) {
   }, {
     key: 'onLetterGuess',
     value: function onLetterGuess(letter) {
-      console.log(letter == "d");
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = this.state.targetLetters[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var l = _step.value;
-
-          console.log(l, letter, l == letter);
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-
       if (this.state.targetLetters.includes(letter)) {
         this._letterFound(letter);
       } else {
