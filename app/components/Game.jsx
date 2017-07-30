@@ -119,4 +119,6 @@ export default class Game extends React.Component {
   }
 }
 
-const GameStatus = ({phase}) => <h5 className={phase.class}>{phase.text}</h5>
+function GameStatus({phase}) {
+  return <h5 className={phase.class}>{phase.text}</h5>
+}

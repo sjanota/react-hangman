@@ -15,32 +15,47 @@ function allowedLetters() {
 export default class App extends React.Component {
   constructor() {
     super();
+    this.resetGame = this.resetGame.bind(this);
 
     WordsService.onReady(() => this.setState({wordsReady: true}))
     this.state = {
-      wordsReady: false
+      wordsReady: false,
+      difficulty: null
     }
   }
 
   render() {
     return (
       <div id="app-content">
-        {this._isReady() ? this._renderGame() : this._renderLoading()}
-
+        {this.renderControlBar()}
+        {this.renderLoading()}
+        {this.renderGame()}
       </div>
     );
   }
 
-  _isReady() {
-    return this.state.wordsReady
+  renderControlBar() {
+    if (this.state.difficulty == null) {
+      return <ControlBar>
+        {this.LevelButton('easy')}
+        {this.LevelButton('medium')}
+        {this.LevelButton('hard')}
+      </ControlBar>
+    } else {
+      return <ControlBar>
+        {this.ResetButton()}
+      </ControlBar>
+    }
   }
 
-  _renderGame() {
-    return <Game
-      word = {this._randomWord('easy')}
-      allowedLetters={WordsService.letters}
-      maxErrors={10}
-    />
+  renderGame() {
+    if (this.state.difficulty != null) {
+      return <Game
+        word = {this._randomWord(this.state.difficulty)}
+        allowedLetters={WordsService.letters}
+        maxErrors={10}
+      />
+    }
   }
 
   _randomWord(level) {
@@ -48,7 +63,35 @@ export default class App extends React.Component {
     return WordsService.words[level][i]
   }
 
-  _renderLoading() {
-    return <p>Loading</p>
+  renderLoading() {
+    if (!this.state.wordsReady) {
+      return <h5>Loading</h5>
+    }
+  }
+
+  LevelButton(level) {
+    return <button
+      onClick={() => this.chooseDificulty(level)}
+    >{level}</button>
+  }
+
+  ResetButton() {
+    return <button
+      onClick={this.resetGame}
+    >reset</button>
+  }
+
+  chooseDificulty(level) {
+    this.setState({difficulty: level});
+  }
+
+  resetGame() {
+    this.setState({difficulty: null})
   }
 }
+
+const EasyButton = () => LevelButton('easy')
+const MediumButton = () => LevelButton('medium')
+const HardButton = () => LevelButton('hard')
+
+const ControlBar = ({children}) => <div className="control-bar">{children}</div>

@@ -195,11 +195,14 @@ var App = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
 
+    _this.resetGame = _this.resetGame.bind(_this);
+
     _WordsService2.default.onReady(function () {
       return _this.setState({ wordsReady: true });
     });
     _this.state = {
-      wordsReady: false
+      wordsReady: false,
+      difficulty: null
     };
     return _this;
   }
@@ -210,22 +213,40 @@ var App = function (_React$Component) {
       return _react2.default.createElement(
         'div',
         { id: 'app-content' },
-        this._isReady() ? this._renderGame() : this._renderLoading()
+        this.renderControlBar(),
+        this.renderLoading(),
+        this.renderGame()
       );
     }
   }, {
-    key: '_isReady',
-    value: function _isReady() {
-      return this.state.wordsReady;
+    key: 'renderControlBar',
+    value: function renderControlBar() {
+      if (this.state.difficulty == null) {
+        return _react2.default.createElement(
+          ControlBar,
+          null,
+          this.LevelButton('easy'),
+          this.LevelButton('medium'),
+          this.LevelButton('hard')
+        );
+      } else {
+        return _react2.default.createElement(
+          ControlBar,
+          null,
+          this.ResetButton()
+        );
+      }
     }
   }, {
-    key: '_renderGame',
-    value: function _renderGame() {
-      return _react2.default.createElement(_Game2.default, {
-        word: this._randomWord('easy'),
-        allowedLetters: _WordsService2.default.letters,
-        maxErrors: 10
-      });
+    key: 'renderGame',
+    value: function renderGame() {
+      if (this.state.difficulty != null) {
+        return _react2.default.createElement(_Game2.default, {
+          word: this._randomWord(this.state.difficulty),
+          allowedLetters: _WordsService2.default.letters,
+          maxErrors: 10
+        });
+      }
     }
   }, {
     key: '_randomWord',
@@ -234,13 +255,51 @@ var App = function (_React$Component) {
       return _WordsService2.default.words[level][i];
     }
   }, {
-    key: '_renderLoading',
-    value: function _renderLoading() {
+    key: 'renderLoading',
+    value: function renderLoading() {
+      if (!this.state.wordsReady) {
+        return _react2.default.createElement(
+          'h5',
+          null,
+          'Loading'
+        );
+      }
+    }
+  }, {
+    key: 'LevelButton',
+    value: function LevelButton(level) {
+      var _this2 = this;
+
       return _react2.default.createElement(
-        'p',
-        null,
-        'Loading'
+        'button',
+        {
+          onClick: function onClick() {
+            return _this2.chooseDificulty(level);
+          }
+        },
+        level
       );
+    }
+  }, {
+    key: 'ResetButton',
+    value: function ResetButton() {
+      return _react2.default.createElement(
+        'button',
+        {
+          onClick: this.resetGame
+        },
+        'reset'
+      );
+    }
+  }, {
+    key: 'chooseDificulty',
+    value: function chooseDificulty(level) {
+      this.setState({ difficulty: level });
+    }
+  }, {
+    key: 'resetGame',
+    value: function resetGame() {
+      this.setState({ difficulty: null });
     }
   }]);
 
@@ -248,6 +307,26 @@ var App = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = App;
+
+
+var EasyButton = function EasyButton() {
+  return LevelButton('easy');
+};
+var MediumButton = function MediumButton() {
+  return LevelButton('medium');
+};
+var HardButton = function HardButton() {
+  return LevelButton('hard');
+};
+
+var ControlBar = function ControlBar(_ref) {
+  var children = _ref.children;
+  return _react2.default.createElement(
+    'div',
+    { className: 'control-bar' },
+    children
+  );
+};
 
 });
 
@@ -432,18 +511,19 @@ var Game = function (_React$Component) {
 exports.default = Game;
 
 
-var GameStatus = function GameStatus(_ref) {
+function GameStatus(_ref) {
   var phase = _ref.phase;
+
   return _react2.default.createElement(
     'h5',
     { className: phase.class },
     phase.text
   );
-};
+}
 
 });
 
-require.register("components/Hangman.jsx", function(exports, require, module) {
+;require.register("components/Hangman.jsx", function(exports, require, module) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
